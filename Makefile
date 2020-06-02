@@ -50,3 +50,6 @@ wp/install/plugin/%:
 	# ---------- $@ ----------
 	wget -nc -P .cache $(wp_plugins_url)/$*
 	unzip -q -o .cache/$* -d $(wp_plugins_path)
+clone/%:
+	# ---------- $@ ----------
+	cd wordpress && git clone $*
