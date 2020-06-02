@@ -1,0 +1,4 @@
+/wordpress/
+/.runtime
+/.env
+/.cache

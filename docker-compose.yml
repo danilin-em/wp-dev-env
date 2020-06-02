@@ -1,0 +1,36 @@
+version: '3.7'
+
+volumes:
+  db: null
+
+services:
+  app:
+    build: .
+    image: localhost/${NAME:-app}/app:dev
+    volumes:
+      - ./wordpress:/var/www/html
+    ports:
+      - 80:80
+    environment:
+      XDEBUG_CONFIG: ${XDEBUG_CONFIG}
+      DB_HOST: ${DB_HOST:-db}
+      DB_NAME: ${DB_NAME:-app}
+      DB_USER: ${DB_USER:-app}
+      DB_PASSWORD: ${DB_PASSWORD:-app}
+    command: php -S 0.0.0.0:80
+  db:
+    image: mariadb:10.1
+    ports:
+      - 3306:3306
+    volumes:
+      - db:/var/lib/mysql
+      - ./initdb:/docker-entrypoint-initdb.d:ro
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${DB_NAME:-app}
+      MYSQL_USER: ${DB_USER:-app}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-app}
+  adminer:
+    image: adminer:4.7
+    ports:
+      - 8080:8080
