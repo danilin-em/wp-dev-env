@@ -17,8 +17,13 @@ rm master.zip
 cd wp-dev-env-master
 # Build env image, download wordpress, download dev plugins
 make
-# Clone your project
-make clone/git@github.com:danilin-em/my-super-theme.git
+
+# Init your project
+
+# init theme
+make project/init/theme/hello-world
+# or init plugin
+make project/init/plugin/say-my-name
 
 ```
 
