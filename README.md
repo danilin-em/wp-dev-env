@@ -24,5 +24,11 @@ make clone/git@github.com:danilin-em/my-super-theme.git
 
 ## Requirements
 
+- docker
+- docker-compose
+
 - wget
 - unzip
+- sed
+
+- composer
