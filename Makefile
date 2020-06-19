@@ -79,21 +79,23 @@ linter/phpcbf:
 linter/config/wpcs:
 	./vendor/bin/phpcs --config-set installed_paths $(shell pwd)/vendor/wp-coding-standards/wpcs
 # Project
+project/wp-content/%:
+	$(eval $@_NAME=$(shell basename $*))
+	mkdir ./$($@_NAME)
+	touch ./$($@_NAME)/.gitkeep
+	sed -i 's|# app:volumes|- ./$($@_NAME):/var/www/html/wordpress/wp-content/themes/$*\n      # app:volumes|g' docker-compose.yml
+	sed -i 's|// pathMappings|"/var/www/html/wordpress/wp-content/themes/$*": "$${workspaceFolder}/$($@_NAME)",\n				// pathMappings|' .vscode/launch.json
+	# ---------- $@ ----------
+project/drop/wp-content/%:
+	$(eval $@_NAME=$(shell basename $*))
+	rm -r ./$($@_NAME)
+	sed -i '\|- ./$($@_NAME):/var/www/html/wordpress/wp-content/themes/$*|d' docker-compose.yml
+	sed -i '\|"/var/www/html/wordpress/wp-content/themes/$*": "$${workspaceFolder}/$($@_NAME)",|d' .vscode/launch.json
 project/theme/%:
-	mkdir ./$*
-	touch ./$*/.gitkeep
-	sed -i 's|# app:volumes|- ./$*:/var/www/html/wordpress/wp-content/themes/$*\n      # app:volumes|g' docker-compose.yml
-	sed -i 's|// pathMappings|"/var/www/html/wordpress/wp-content/themes/$*": "\${workspaceFolder}/$*",\n				// pathMappings|' .vscode/launch.json
+	make project/wp-content/themes/$*
 project/drop/theme/%:
-	rm -r ./$*
-	sed -i '\|- ./$*:/var/www/html/wordpress/wp-content/themes/$*|d' docker-compose.yml
-	sed -i '\|"/var/www/html/wordpress/wp-content/themes/$*": "\${workspaceFolder}/$*",|d' .vscode/launch.json
+	make project/drop/wp-content/themes/$*
 project/plugin/%:
-	mkdir ./$*
-	touch ./$*/.gitkeep
-	sed -i 's|# app:volumes|- ./$*:/var/www/html/wordpress/wp-content/plugins/$*\n      # app:volumes|g' docker-compose.yml
-	sed -i 's|// pathMappings|"/var/www/html/wordpress/wp-content/plugins/$*": "\${workspaceFolder}/$*",\n				// pathMappings|' .vscode/launch.json
+	make project/wp-content/plugins/$*
 project/drop/plugin/%:
-	rm -r ./$*
-	sed -i '\|- ./$*:/var/www/html/wordpress/wp-content/plugins/$*|d' docker-compose.yml
-	sed -i '\|"/var/www/html/wordpress/wp-content/plugins/$*": "\${workspaceFolder}/$*",|d' .vscode/launch.json
+	make project/drop/wp-content/plugins/$*
