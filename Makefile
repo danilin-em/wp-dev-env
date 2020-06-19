@@ -63,7 +63,3 @@ linter/phpcbf:
 	./vendor/bin/phpcbf --ignore=vendor,wordpress --extensions=php --standard=WordPress-Extra .
 linter/config/wpcs:
 	./vendor/bin/phpcs --config-set installed_paths $(shell pwd)/vendor/wp-coding-standards/wpcs
-# Project
-clone/%:
-	cd wordpress && git clone $*
-	# ---------- $@ ----------
