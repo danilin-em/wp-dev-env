@@ -25,7 +25,7 @@ build:
 	docker-compose build
 env:
 	-mkdir -p $(wp_plugins_path) $(wp_themes_path)
-	-mkdir .cache
+	-mkdir $(cache_path)
 	echo NAME=$(NAME) > .env
 	echo HOSTNAME=$(HOSTNAME) >> .env
 	echo XDEBUG_CONFIG=$(XDEBUG_CONFIG) >> .env
@@ -35,7 +35,7 @@ clean:
 	docker-compose rm -fsv
 	-rm -rf $(wp_root)
 prune: clean
-	rm -rf .cache
+	rm -rf $(cache_path)
 	docker-compose run app bash -c 'rm -rf /var/www/html/*'
 # Environment
 environment: \
@@ -67,12 +67,12 @@ wp/install/plugin/query-monitor.3.6.0.zip \
 wp/defaults:
 	cp -rf defaults/wordpress/* $(wp_root)
 wp/install/wordpress-%:
-	wget -nc -P .cache $(wp_url)/wordpress-$*
-	unzip -q -o .cache/wordpress-$* -d $(wp_root)
+	wget -nc -P $(cache_path) $(wp_url)/wordpress-$*
+	unzip -q -o $(cache_path)/wordpress-$* -d $(wp_root)
 	# ---------- $@ ----------
 wp/install/plugin/%:
-	wget -nc -P .cache $(wp_plugins_url)/$*
-	unzip -q -o .cache/$* -d $(wp_plugins_path)
+	wget -nc -P $(cache_path) $(wp_plugins_url)/$*
+	unzip -q -o $(cache_path)/$* -d $(wp_plugins_path)
 	# ---------- $@ ----------
 # Linter
 lint: linter/phpcbf linter/phpcs
