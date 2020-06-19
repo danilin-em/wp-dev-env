@@ -44,6 +44,13 @@ environment/requirements:
 environment/config: \
 linter/config/wpcs
 	# Environment Configured!
+# Features
+feature/initdb:
+	mkdir -p ./initdb
+	touch ./initdb/.gitkeep
+	sed -i 's/# feature:initdb/- .\/initdb:\/docker-entrypoint-initdb.d:ro/g' docker-compose.yml
+feature/initdb/disable:
+	sed -i 's/- .\/initdb:\/docker-entrypoint-initdb.d:ro/# feature:initdb/g' docker-compose.yml
 # Wordpress
 wp: wp/requirements wp/defaults
 	# Wordpress Installed!
