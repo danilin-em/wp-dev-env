@@ -21,9 +21,9 @@ make
 # Init your project
 
 # init theme
-make project/init/theme/hello-world
+make project/theme/hello-world
 # or init plugin
-make project/init/plugin/say-my-name
+make project/plugin/say-my-name
 
 ```
 

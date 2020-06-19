@@ -79,7 +79,7 @@ linter/phpcbf:
 linter/config/wpcs:
 	./vendor/bin/phpcs --config-set installed_paths $(shell pwd)/vendor/wp-coding-standards/wpcs
 # Project
-project/init/theme/%:
+project/theme/%:
 	mkdir ./$*
 	touch ./$*/.gitkeep
 	sed -i 's|# app:volumes|- ./$*:/var/www/html/wordpress/wp-content/themes/$*\n      # app:volumes|g' docker-compose.yml
@@ -88,7 +88,7 @@ project/drop/theme/%:
 	rm -r ./$*
 	sed -i '\|- ./$*:/var/www/html/wordpress/wp-content/themes/$*|d' docker-compose.yml
 	sed -i '\|"/var/www/html/wordpress/wp-content/themes/$*": "\${workspaceFolder}/$*",|d' .vscode/launch.json
-project/init/plugin/%:
+project/plugin/%:
 	mkdir ./$*
 	touch ./$*/.gitkeep
 	sed -i 's|# app:volumes|- ./$*:/var/www/html/wordpress/wp-content/plugins/$*\n      # app:volumes|g' docker-compose.yml
