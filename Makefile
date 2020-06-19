@@ -43,13 +43,14 @@ wp/install/plugin/query-monitor.3.6.0.zip \
 wp/defaults:
 	cp -rf defaults/wordpress/* wordpress
 wp/install/wordpress-%:
-	# ---------- $@ ----------
 	wget -nc -P .cache $(wp_url)/wordpress-$*
 	unzip -q -o .cache/wordpress-$*
-wp/install/plugin/%:
 	# ---------- $@ ----------
+wp/install/plugin/%:
 	wget -nc -P .cache $(wp_plugins_url)/$*
 	unzip -q -o .cache/$* -d $(wp_plugins_path)
-clone/%:
 	# ---------- $@ ----------
+# Project
+clone/%:
 	cd wordpress && git clone $*
+	# ---------- $@ ----------
