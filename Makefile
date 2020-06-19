@@ -14,7 +14,9 @@ all: env pull build wp
 .PHONY: all
 
 pull:
-	docker-compose pull
+	docker pull wordpress:5.4-apache
+	docker pull php:7.0.33-apache
+	docker-compose pull db adminer
 build:
 	docker-compose build
 env:
