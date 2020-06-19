@@ -13,7 +13,7 @@ NAME=$(shell basename $(shell pwd))
 HOSTNAME=$(shell hostname)
 XDEBUG_CONFIG=remote_host=$(HOSTNAME) remote_port=9000 remote_enable=1 remote_autostart=1
 
-all: env pull build wp environment
+all: environment wp pull build
 	# Environment
 .PHONY: all
 
@@ -23,12 +23,6 @@ pull:
 	docker-compose pull db adminer
 build:
 	docker-compose build
-env:
-	-mkdir -p $(wp_plugins_path) $(wp_themes_path)
-	-mkdir $(cache_path)
-	echo NAME=$(NAME) > .env
-	echo HOSTNAME=$(HOSTNAME) >> .env
-	echo XDEBUG_CONFIG=$(XDEBUG_CONFIG) >> .env
 serve:
 	docker-compose up
 clean:
@@ -39,6 +33,7 @@ prune: clean
 	docker-compose run app bash -c 'rm -rf /var/www/html/*'
 # Environment
 environment: \
+environment/env \
 environment/requirements \
 environment/config \
 linter/config/wpcs
@@ -49,6 +44,12 @@ environment/config:
 	sed -i 's|# app:volumes|- ./$(wp_root):/var/www/html\n      # app:volumes|g' docker-compose.yml
 	sed -i 's|// pathMappings|"/var/www/html": "$${workspaceFolder}/$(wp_root)",\n				// pathMappings|' .vscode/launch.json
 	# Environment Configured!
+environment/env:
+	-mkdir -p $(wp_plugins_path) $(wp_themes_path)
+	-mkdir $(cache_path)
+	echo NAME=$(NAME) > .env
+	echo HOSTNAME=$(HOSTNAME) >> .env
+	echo XDEBUG_CONFIG=$(XDEBUG_CONFIG) >> .env
 # Features
 feature/initdb:
 	mkdir -p ./initdb
