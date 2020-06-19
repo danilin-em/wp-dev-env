@@ -9,7 +9,7 @@ NAME=$(shell basename $(shell pwd))
 HOSTNAME=$(shell hostname)
 XDEBUG_CONFIG=remote_host=$(HOSTNAME) remote_port=9000 remote_enable=1 remote_autostart=1
 
-all: env pull build wp
+all: env pull build wp requirements
 	# Environment
 .PHONY: all
 
@@ -34,6 +34,8 @@ clean:
 prune: clean
 	rm -rf .cache
 	docker-compose run app bash -c 'rm -rf /var/www/html/*'
+requirements:
+	composer install
 # Wordpress
 wp: wp/requirements wp/defaults
 	# Wordpress Installed!
