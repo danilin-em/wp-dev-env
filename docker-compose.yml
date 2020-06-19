@@ -8,7 +8,6 @@ services:
     build: .
     image: localhost/${NAME:-app}/app:dev
     volumes:
-      - ./wordpress:/var/www/html
       # app:volumes
     ports:
       - 80:80

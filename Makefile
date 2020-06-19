@@ -2,8 +2,12 @@ wp_url=https://ru.wordpress.org
 
 wp_plugins_url=https://downloads.wordpress.org/plugin
 
-wp_themes_path=
-wp_plugins_path=wordpress/wp-content/plugins
+wp_root=.wordpress
+wp_content_path=$(wp_root)/wp-content
+wp_plugins_path=$(wp_content_path)/plugins
+wp_themes_path=$(wp_content_path)/themes
+
+cache_path=.cache
 
 NAME=$(shell basename $(shell pwd))
 HOSTNAME=$(shell hostname)
@@ -20,9 +24,8 @@ pull:
 build:
 	docker-compose build
 env:
-	-mkdir -p wordpress/wp-content/plugins wordpress/wp-content/themes
+	-mkdir -p $(wp_plugins_path) $(wp_themes_path)
 	-mkdir .cache
-	-mkdir initdb
 	echo NAME=$(NAME) > .env
 	echo HOSTNAME=$(HOSTNAME) >> .env
 	echo XDEBUG_CONFIG=$(XDEBUG_CONFIG) >> .env
@@ -30,19 +33,21 @@ serve:
 	docker-compose up
 clean:
 	docker-compose rm -fsv
-	-rm -rf wordpress
+	-rm -rf $(wp_root)
 prune: clean
 	rm -rf .cache
 	docker-compose run app bash -c 'rm -rf /var/www/html/*'
 # Environment
 environment: \
 environment/requirements \
-environment/config
+environment/config \
+linter/config/wpcs
 	# Environment Inited!
 environment/requirements:
 	composer install
-environment/config: \
-linter/config/wpcs
+environment/config:
+	sed -i 's|# app:volumes|- ./$(wp_root):/var/www/html\n      # app:volumes|g' docker-compose.yml
+	sed -i 's|// pathMappings|"/var/www/html": "$${workspaceFolder}/$(wp_root)",\n				// pathMappings|' .vscode/launch.json
 	# Environment Configured!
 # Features
 feature/initdb:
@@ -60,10 +65,10 @@ wp/install/plugin/developer.1.2.6.zip \
 wp/install/plugin/query-monitor.3.6.0.zip \
 	# Wordpress Requirements Installed!
 wp/defaults:
-	cp -rf defaults/wordpress/* wordpress
+	cp -rf defaults/wordpress/* $(wp_root)
 wp/install/wordpress-%:
 	wget -nc -P .cache $(wp_url)/wordpress-$*
-	unzip -q -o .cache/wordpress-$*
+	unzip -q -o .cache/wordpress-$* -d $(wp_root)
 	# ---------- $@ ----------
 wp/install/plugin/%:
 	wget -nc -P .cache $(wp_plugins_url)/$*
